@@ -1,0 +1,32 @@
+# Установка:
+#  mac: brew install go-task/tap/go-task
+#  windows: choco install go-task
+#  linux: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+#  go modules: go install github.com/go-task/task/v3/cmd/task@latest
+
+version: "3"
+
+env:
+  LEFTHOOK_VERSION: v1.10.10 # https://github.com/evilmartians/lefthook
+
+tasks:
+  default:
+    cmds:
+      - task: setup
+
+  setup:
+    desc: "Настройка инструментов сборки и тестирования"
+    summary: |
+      Компилятор protoc ставим отсюда https://grpc.io/docs/protoc-installation/
+      Полный мануал https://grpc.io/docs/languages/go/quickstart/
+        - win: choco install protoc
+        - mac: brew install protobuf
+    cmds:
+      - rm -rf .bin
+      - |
+        export GOBIN=$(pwd)/.bin
+        go install github.com/evilmartians/lefthook@$LEFTHOOK_VERSION
+      - task: pre-commit
+
+  pre-commit:
+    .bin/lefthook install
